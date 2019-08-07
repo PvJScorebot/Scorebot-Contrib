@@ -9,7 +9,8 @@ from argparse import ArgumentParser
 def start():
     a = ArgumentParser(description="Scorebot Events Creator")
     a.add_argument(
-        "--sbe",
+        "-s",
+        "--scorebot",
         dest="scorebot",
         metavar="scorebot",
         required=True,
@@ -17,6 +18,7 @@ def start():
         help="Scorebot URL",
     )
     a.add_argument(
+        "-u",
         "--token",
         dest="token",
         metavar="uuid",
@@ -25,14 +27,27 @@ def start():
         help="Scorebot Access Token UUID",
     )
     a.add_argument(
-        "--title",
-        dest="title",
-        metavar="title",
-        required=False,
-        type=str,
-        help="Window Popup Title",
+        "-g",
+        "--game",
+        dest="game",
+        metavar="game",
+        required=True,
+        type=int,
+        help="The Game ID to Show the Event on",
     )
+
     a.add_argument(
+        "-t",
+        "--timeout",
+        dest="timeout",
+        metavar="timeout",
+        required=True,
+        type=int,
+        help="The Time (in seconds) to Display the Event",
+    )
+
+    a.add_argument(
+        "-m",
         "--message",
         dest="message",
         metavar="message",
@@ -41,6 +56,7 @@ def start():
         help="Message to Display",
     )
     a.add_argument(
+        "-c",
         "--command",
         dest="command",
         action="store_true",
@@ -55,55 +71,24 @@ def start():
         type=str,
         help="Message Command Response (implies --command)",
     )
+
     a.add_argument(
+        "--title",
+        dest="title",
+        metavar="title",
+        required=False,
+        type=str,
+        help="Window Popup Title",
+    )
+
+    a.add_argument(
+        "-v",
         "--video",
         dest="video",
         metavar="video",
         required=False,
         type=str,
         help="Youtube Video ID to Use",
-    )
-    a.add_argument(
-        "--content",
-        dest="content",
-        metavar="html",
-        required=False,
-        type=str,
-        help="Window Content to Use. (Empty to use file)",
-    )
-    a.add_argument(
-        "--file",
-        dest="file",
-        metavar="path",
-        required=False,
-        type=str,
-        help="File to Read Window/Effect Content From",
-    )
-    a.add_argument(
-        "--effect",
-        dest="effect",
-        metavar="effect",
-        required=False,
-        type=str,
-        help="Effect string to use. (Empty to use file)",
-    )
-    a.add_argument(
-        "-g",
-        "--game",
-        dest="game",
-        metavar="game",
-        required=True,
-        type=int,
-        help="The Game ID to Show the Event on",
-    )
-    a.add_argument(
-        "-t",
-        "--timeout",
-        dest="timeout",
-        metavar="timeout",
-        required=True,
-        type=int,
-        help="The Time (in seconds) to Display the Event",
     )
     a.add_argument(
         "--start",
@@ -113,6 +98,36 @@ def start():
         type=int,
         help="The Time (in seconds) to Start the video at",
     )
+
+    a.add_argument(
+        "-d",
+        "--content",
+        dest="content",
+        metavar="html",
+        required=False,
+        type=str,
+        help="Window Content to Use. (Empty to use file)",
+    )
+
+    a.add_argument(
+        "-e",
+        "--effect",
+        dest="effect",
+        metavar="effect",
+        required=False,
+        type=str,
+        help="Effect string to use. (Empty to use file)",
+    )
+
+    a.add_argument(
+        "-f",
+        "--file",
+        dest="file",
+        metavar="path",
+        required=False,
+        type=str,
+        help="File to Read Window/Effect Content From",
+    )
     return check(a.parse_args())
 
 
@@ -120,8 +135,9 @@ def check(args):
     if (
         args.video is None
         and args.file is None
-        and args.message is None
         and args.effect is None
+        and args.message is None
+        and args.content is None
     ):
         print(
             "One of the following values must be provided (content, file, message or video)!",
@@ -215,18 +231,22 @@ def check(args):
 
 if __name__ == "__main__":
     d, g, s, t = start()
+
     r = session()
     r.headers["SBE-AUTH"] = t
+
     try:
-        o = r.post("%s/api/event/%d/" % (s, g), data=dumps(d))
-    except Exception as err:
-        print("Failed to send Event data! (%s)" % str(err))
+        o = r.post("%s/api/event/%d/" % (s, g), data=dumps(d), timeout=5)
+    except OSError as err:
+        print("Failed to send Event data! (%s)" % str(err), file=stderr)
         exit(1)
+
     if o.status_code != 201:
         print(
             "Error occured from Scorebot event parsing! (code: %d) %s"
             % (o.status_code, o.content.decode("UTF-8"))
         )
         exit(1)
+
     print("Done!")
     exit(0)
