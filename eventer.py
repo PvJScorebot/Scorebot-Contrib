@@ -134,13 +134,12 @@ def start():
 def check(args):
     if (
         args.video is None
-        and args.file is None
         and args.effect is None
         and args.message is None
         and args.content is None
     ):
         print(
-            "One of the following values must be provided (content, file, message or video)!",
+            "One of the following values must be provided (content, event, message or video)!",
             file=stderr,
         )
         exit(1)
