@@ -80,6 +80,12 @@ def start():
         type=str,
         help="Window Popup Title",
     )
+    a.add_argument(
+        "--fullscreen",
+        dest="fullscreen",
+        action="store_true",
+        help="Window Popup is Fullscreen",
+    )
 
     a.add_argument(
         "-v",
@@ -167,7 +173,11 @@ def check(args):
                 {
                     "type": 1,
                     "timeout": args.timeout,
-                    "data": {"text": data, "title": args.title},
+                    "data": {
+                        "text": data,
+                        "title": args.title,
+                        "fullscreen": args.fullscreen,
+                    },
                 },
                 args.game,
                 args.scorebot,
@@ -196,7 +206,12 @@ def check(args):
             {
                 "type": 3,
                 "timeout": args.timeout,
-                "data": {"video": args.video, "title": args.title, "start": args.start},
+                "data": {
+                    "video": args.video,
+                    "title": args.title,
+                    "start": args.start,
+                    "fullscreen": args.fullscreen,
+                },
             },
             args.game,
             args.scorebot,
@@ -205,7 +220,12 @@ def check(args):
     if args.effect is not None:
         if len(args.effect) > 0:
             return (
-                {"type": 2, "timeout": args.timeout, "data": {"html": args.effect}},
+                {
+                    "type": 2,
+                    "timeout": args.timeout,
+                    "data": {"html": args.effect},
+                    "fullscreen": args.fullscreen,
+                },
                 args.game,
                 args.scorebot,
                 args.token,
@@ -219,7 +239,12 @@ def check(args):
                 print('Could not read file "%s"! (%s)' % (args.file, err))
                 exit(1)
             return (
-                {"type": 2, "timeout": args.timeout, "data": {"html": data}},
+                {
+                    "type": 2,
+                    "timeout": args.timeout,
+                    "data": {"html": data},
+                    "fullscreen": args.fullscreen,
+                },
                 args.game,
                 args.scorebot,
                 args.token,
