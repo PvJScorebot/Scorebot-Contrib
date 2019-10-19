@@ -155,7 +155,11 @@ def check(args):
                 {
                     "type": 1,
                     "timeout": args.timeout,
-                    "data": {"text": args.content, "title": args.title},
+                    "data": {
+                        "text": args.content,
+                        "title": args.title,
+                        "fullscreen": str(args.fullscreen),
+                    },
                 },
                 args.game,
                 args.scorebot,
@@ -220,12 +224,7 @@ def check(args):
     if args.effect is not None:
         if len(args.effect) > 0:
             return (
-                {
-                    "type": 2,
-                    "timeout": args.timeout,
-                    "data": {"html": args.effect},
-                    "fullscreen": str(args.fullscreen),
-                },
+                {"type": 2, "timeout": args.timeout, "data": {"html": args.effect}},
                 args.game,
                 args.scorebot,
                 args.token,
