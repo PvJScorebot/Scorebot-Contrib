@@ -1,0 +1,6 @@
+<div id="partymode"></div><script type="text/javascript">
+function r(){var s="#";var a="0123456789ABCDEF";for(var x=0;x<6;x++){s+=a[Math.floor(Math.random()*16)];}return s;}
+function d(){var v=document.getElementById("partymode");if(v===null) {return;}var e=document.getElementsByClassName("service");
+var s='.offline::before{display:none !important;}body{background:'+r()+' !important;color:'+r()+' !important}#game{background:'+r()+' !important}';
+if(e!==null) {for(var x=0;x<e.length;x++){s+='#'+e[x].id+'{color: transparent !important;background:'+r()+' !important}';}}
+v.innerHTML='<style type="text/css">'+s+'</style>';setTimeout(d, 2500);}d();</script>

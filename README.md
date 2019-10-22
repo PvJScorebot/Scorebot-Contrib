@@ -1,3 +1,3 @@
 # Scorebot Contrib
 
-This directory contains tools and utilitis to assist in managining/running Scorebot.
+This directory contains tools and utilities to assist in managing/running Scorebot.

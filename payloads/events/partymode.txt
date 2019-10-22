@@ -1,9 +1,0 @@
-<div id="partymode"></div><script type="text/javascript">
-function r(){var s="#";var a="0123456789ABCDEF";for(var x=0;x<6;x++)
-{s+=a[Math.floor(Math.random()*16)];}return s;}function d(){
-var v=document.getElementById("partymode");if(v!==null){
-sc="";var el=document.getElementsByClassName("service-port");
-if(el!==null&&el.length>0){for(var t=0;t<el.length;t++){
-sc+='<style type="text/css">#'+el[t].id+'{color: transparent !important;background:'+r()+' !important;}</style>';}}
-v.innerHTML=sc+'<style type="text/css">.offline::before{display:none !important;}body{background:'+r()+' !important;color:'+r()+' !important;}#game{background:'+r()+' !important;}</style>';
-setTimeout(d, 2500);}}d();</script>

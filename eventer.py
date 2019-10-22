@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# Displays and modifies the appearance of the scoreboard based on the profile selected.
+# iDigitalFlame
 
 from json import dumps
 from sys import exit, stderr
@@ -254,22 +256,18 @@ def check(args):
 
 if __name__ == "__main__":
     d, g, s, t = start()
-
     r = session()
     r.headers["SBE-AUTH"] = t
-
     try:
         o = r.post("%s/api/event/%d/" % (s, g), data=dumps(d), timeout=5)
     except OSError as err:
-        print("Failed to send Event data! (%s)" % str(err), file=stderr)
+        print("Failed to send Event data: %s" % str(err), file=stderr)
         exit(1)
-
     if o.status_code != 201:
         print(
-            "Error occured from Scorebot event parsing! (code: %d) %s"
+            "Error occurred from Scorebot event parsing! (code: %d) %s"
             % (o.status_code, o.content.decode("UTF-8"))
         )
         exit(1)
-
     print("Done!")
     exit(0)
