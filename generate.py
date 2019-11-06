@@ -10,7 +10,7 @@ from collections import namedtuple
 from sys import argv, stderr, exit
 
 Team = namedtuple("Team", ["Name", "DNS", "Network"])
-Record = namedtuple("Record", ["ID", "Name", "Value", "Ports", "Start", "End"])
+Record = namedtuple("Record", ["ID", "Name", "Value", "Ports", "Last"])
 
 TEAMS = (
     Team(Name="ALPHA", DNS="10.100.101.60", Network="10.100.101.0/24"),
@@ -28,39 +28,39 @@ def read(file):
     except OSError as err:
         print("Cannot read file: %s" % str(err), file=stderr)
         exit(1)
-    c = None
-    r = list()
+    r = dict()
     for x in range(0, len(a)):
         if x == 0 or len(a[x]) == 0:
             continue
         d = a[x].replace("\r", "").split(",")
-        if len(d) == 0 or d[5] != "0":
+        if len(d) == 0 or d[2] != "0" or d[6] != "0":
             continue
-        s = datetime.fromisoformat(d[6].replace("Z", ""))
-        e = datetime.fromisoformat(d[7].replace("Z", ""))
-        if s.hour != 0 and s.minute != 0:
-            continue
+        if len(d[9]) == 0:
+            print('Entry "%s" does not have a valid DNS name!' % a[x], file=stderr)
+            exit(1)
         try:
-            if c is None or c.ID != int(d[0]):
-                if c is not None:
-                    r.append(c)
+            i = int(d[1])
+            if i not in r:
+                p = d[11].split(".")
+                if len(p) > 0:
+                    p = p[len(p) - 1]
                 c = Record(
-                    ID=int(d[0]),
-                    Name=d[1].replace(" ", "-").replace("(", "").replace(")", ""),
-                    Value=int(d[4]),
-                    Ports=[],
-                    Start=s,
-                    End=e,
+                    ID=i,
+                    Name=d[9].replace(" ", "-").replace("(", "").replace(")", ""),
+                    Value=int(d[5]),
+                    Ports=list(),
+                    Last=p,
                 )
-            c.Ports.append(int(d[3]))
-            if c.Value != int(d[4]):
-                c.Value = int(d[4])
+                r[i] = c
+            else:
+                c = r[i]
+            c.Ports.append(int(d[4]))
+            if c.Value != int(d[5]):
+                c.Value = int(d[5])
         except ValueError as err:
             print("Could not parse value: %s" % str(err), file=stderr)
             exit(1)
-    if c is not None:
-        r.append(c)
-    return r
+    return list(r.values())
 
 
 def compile(hosts):
@@ -73,6 +73,9 @@ def compile(hosts):
                 s.append({"port": str(p), "value": 100, "protocol": "tcp"})
             d.append(
                 {
+                    "ip": ".".join(
+                        [o if "/" not in o else h.Last for o in t.Network.split(".")]
+                    ),
                     "value": h.Value,
                     "hostname": "%s.%s.net" % (h.Name.lower(), t.Name.lower()),
                     "services": s,
