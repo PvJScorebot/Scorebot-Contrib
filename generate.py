@@ -21,7 +21,7 @@
 from json import dumps
 from datetime import datetime
 from collections import namedtuple
-from sys import argv, stderr, exit
+from sys import argv, exit, stderr
 
 Team = namedtuple("Team", ["Name", "DNS", "Network"])
 Record = namedtuple("Record", ["ID", "Name", "Value", "Ports", "Last"])

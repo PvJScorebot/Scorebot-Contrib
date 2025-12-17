@@ -19,9 +19,8 @@
 #
 
 from requests import session
-from sys import exit, argv, stderr
-from json import loads, JSONDecodeError
-
+from sys import argv, exit, stderr
+from json import JSONDecodeError, loads
 
 if __name__ == "__main__":
     if len(argv) != 3:

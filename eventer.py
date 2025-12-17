@@ -18,8 +18,8 @@
 #
 
 from json import dumps
-from sys import exit, stderr
 from requests import session
+from sys import exit, stderr
 from argparse import ArgumentParser
 
 
